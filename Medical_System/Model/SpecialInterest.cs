@@ -2,13 +2,10 @@
 
 namespace Medical_System.Model
 {
-    public class Problem
+    public class SpecialInterest
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-
-        
-        public virtual ICollection<PatientProblem> PatientProblems { get; set; }
     }
 }

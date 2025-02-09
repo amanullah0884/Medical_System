@@ -13,8 +13,6 @@ namespace Medical_System.Model
 
         [ForeignKey("Problem")]
         public int ProblemId { get; set; }
-
-        [ValidateNever] 
         public virtual Patient Patient { get; set; }
         public virtual Problem Problem { get; set; }
     }

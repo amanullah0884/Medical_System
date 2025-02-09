@@ -7,15 +7,20 @@ namespace Medical_System.Model
     {
         public int Id { get; set; }
         public string Name { get; set; }
+
         [ForeignKey("Degree")]
         public int DegreeId { get; set; }
+
         [ForeignKey("Institute")]
         public int InstituteId { get; set; }
 
+        [ForeignKey("SpecialInterest")]
+        public int SpecialInterestID { get; set; }
 
         public virtual Degree Degree { get; set; }
         public virtual Institute Institute { get; set; }
-        [ValidateNever]
-        public ICollection<Consultation> Consultations { get; set; }
+        public virtual SpecialInterest SpecialInterest { get; set; }
+        public virtual ICollection<Consultation> Consultations { get; set; }
     }
+
 }

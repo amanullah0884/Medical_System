@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250123101404_init")]
-    partial class init
+    [Migration("20250209093803_iin")]
+    partial class iin
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,33 +24,6 @@ namespace Medical_System.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Medical_System.Model.BMDCNO", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("BMDCNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ConsultationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SpecialInterestId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConsultationId");
-
-                    b.HasIndex("SpecialInterestId");
-
-                    b.ToTable("BMDCNOs");
-                });
 
             modelBuilder.Entity("Medical_System.Model.Consultation", b =>
                 {
@@ -63,8 +36,16 @@ namespace Medical_System.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
@@ -87,6 +68,10 @@ namespace Medical_System.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("DegreeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -113,11 +98,16 @@ namespace Medical_System.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("SpecialInterestID")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DegreeId");
 
                     b.HasIndex("InstituteId");
+
+                    b.HasIndex("SpecialInterestID");
 
                     b.ToTable("Doctors");
                 });
@@ -208,7 +198,7 @@ namespace Medical_System.Migrations
                     b.ToTable("Problems");
                 });
 
-            modelBuilder.Entity("Medical_System.Model.SpecialInetrest", b =>
+            modelBuilder.Entity("Medical_System.Model.SpecialInterest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -216,32 +206,17 @@ namespace Medical_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("InterestName")
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("specialInetrests");
-                });
-
-            modelBuilder.Entity("Medical_System.Model.BMDCNO", b =>
-                {
-                    b.HasOne("Medical_System.Model.Consultation", "Consultation")
-                        .WithMany()
-                        .HasForeignKey("ConsultationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Medical_System.Model.SpecialInetrest", "SpecialInterest")
-                        .WithMany("BMDCNOs")
-                        .HasForeignKey("SpecialInterestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Consultation");
-
-                    b.Navigation("SpecialInterest");
                 });
 
             modelBuilder.Entity("Medical_System.Model.Consultation", b =>
@@ -277,9 +252,17 @@ namespace Medical_System.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Medical_System.Model.SpecialInterest", "SpecialInterest")
+                        .WithMany()
+                        .HasForeignKey("SpecialInterestID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Degree");
 
                     b.Navigation("Institute");
+
+                    b.Navigation("SpecialInterest");
                 });
 
             modelBuilder.Entity("Medical_System.Model.PatientProblem", b =>
@@ -319,11 +302,6 @@ namespace Medical_System.Migrations
             modelBuilder.Entity("Medical_System.Model.Problem", b =>
                 {
                     b.Navigation("PatientProblems");
-                });
-
-            modelBuilder.Entity("Medical_System.Model.SpecialInetrest", b =>
-                {
-                    b.Navigation("BMDCNOs");
                 });
 #pragma warning restore 612, 618
         }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Medical_System.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class iin : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,8 @@ namespace Medical_System.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DegreeName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    DegreeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,38 +73,12 @@ namespace Medical_System.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    InterestName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_specialInetrests", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Doctors",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DegreeId = table.Column<int>(type: "int", nullable: false),
-                    InstituteId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Doctors", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Doctors_Degrees_DegreeId",
-                        column: x => x.DegreeId,
-                        principalTable: "Degrees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Doctors_Institutes_InstituteId",
-                        column: x => x.InstituteId,
-                        principalTable: "Institutes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -133,11 +108,47 @@ namespace Medical_System.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Doctors",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DegreeId = table.Column<int>(type: "int", nullable: false),
+                    InstituteId = table.Column<int>(type: "int", nullable: false),
+                    SpecialInterestID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Doctors", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Doctors_Degrees_DegreeId",
+                        column: x => x.DegreeId,
+                        principalTable: "Degrees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Doctors_Institutes_InstituteId",
+                        column: x => x.InstituteId,
+                        principalTable: "Institutes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Doctors_specialInetrests_SpecialInterestID",
+                        column: x => x.SpecialInterestID,
+                        principalTable: "specialInetrests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Consultations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DoctorId = table.Column<int>(type: "int", nullable: false),
                     PatientId = table.Column<int>(type: "int", nullable: false)
@@ -158,43 +169,6 @@ namespace Medical_System.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateTable(
-                name: "BMDCNOs",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BMDCNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ConsultationId = table.Column<int>(type: "int", nullable: false),
-                    SpecialInterestId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BMDCNOs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_BMDCNOs_Consultations_ConsultationId",
-                        column: x => x.ConsultationId,
-                        principalTable: "Consultations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BMDCNOs_specialInetrests_SpecialInterestId",
-                        column: x => x.SpecialInterestId,
-                        principalTable: "specialInetrests",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BMDCNOs_ConsultationId",
-                table: "BMDCNOs",
-                column: "ConsultationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BMDCNOs_SpecialInterestId",
-                table: "BMDCNOs",
-                column: "SpecialInterestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Consultations_DoctorId",
@@ -217,6 +191,11 @@ namespace Medical_System.Migrations
                 column: "InstituteId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Doctors_SpecialInterestID",
+                table: "Doctors",
+                column: "SpecialInterestID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_patientproblems_PatientId",
                 table: "patientproblems",
                 column: "PatientId");
@@ -231,22 +210,16 @@ namespace Medical_System.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "BMDCNOs");
+                name: "Consultations");
 
             migrationBuilder.DropTable(
                 name: "patientproblems");
 
             migrationBuilder.DropTable(
-                name: "Consultations");
-
-            migrationBuilder.DropTable(
-                name: "specialInetrests");
+                name: "Doctors");
 
             migrationBuilder.DropTable(
                 name: "Problems");
-
-            migrationBuilder.DropTable(
-                name: "Doctors");
 
             migrationBuilder.DropTable(
                 name: "patients");
@@ -256,6 +229,9 @@ namespace Medical_System.Migrations
 
             migrationBuilder.DropTable(
                 name: "Institutes");
+
+            migrationBuilder.DropTable(
+                name: "specialInetrests");
         }
     }
 }

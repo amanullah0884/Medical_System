@@ -6,8 +6,9 @@ namespace Medical_System.Model
     {
         public int Id { get; set; }
         public string DegreeName { get; set; }
+        public string Description { get; set; }
 
-        [ValidateNever]
+        
         public virtual ICollection<Doctor> Doctors { get; set; }
     }
 }

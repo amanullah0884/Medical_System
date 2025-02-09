@@ -1,59 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Medical_System.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Medical_System.Model;
 
-//aman
 namespace Medical_System.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
     public class DoctorsController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-
+        public readonly ApplicationDbContext _context;
         public DoctorsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Doctors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctors()
+        public async Task<ActionResult<IEnumerable<Doctor>>> GetDoctor()
         {
-            return await _context.Doctors.ToListAsync();
+            return await _context.Doctors
+                .Include(d => d.Degree)
+                .Include(d => d.Institute)
+                .Include(d => d.SpecialInterest)
+                .ToListAsync();
         }
-
-        // GET: api/Doctors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Doctor>> GetDoctor(int id)
         {
-            var doctor = await _context.Doctors.FindAsync(id);
+            var doctor = await _context.Doctors
+                .Include(d => d.Degree)
+                .Include(d => d.Institute)
+                .Include(d => d.SpecialInterest)
+                .FirstOrDefaultAsync(d => d.Id == id);
 
             if (doctor == null)
             {
                 return NotFound();
             }
+            return Ok(doctor);
 
-            return doctor;
+
         }
-
-        // PUT: api/Doctors/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDoctor(int id, Doctor doctor)
+        public async Task<IActionResult> UpdateDoctor(int id, Doctor doctor)
         {
             if (id != doctor.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(doctor).State = EntityState.Modified;
+            var existingDoctor = await _context.Doctors.FindAsync(id);
+            if (existingDoctor == null)
+            {
+                return NotFound();
+            }
+           
+            existingDoctor.Name = doctor.Name;
+            existingDoctor.DegreeId = doctor.DegreeId;
+            existingDoctor.InstituteId = doctor.InstituteId;
+            existingDoctor.SpecialInterestID = doctor.SpecialInterestID;
 
             try
             {
@@ -70,22 +75,8 @@ namespace Medical_System.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
-
-        // POST: api/Doctors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Doctor>> PostDoctor(Doctor doctor)
-        {
-            _context.Doctors.Add(doctor);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDoctor", new { id = doctor.Id }, doctor);
-        }
-
-        // DELETE: api/Doctors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {
@@ -103,7 +94,9 @@ namespace Medical_System.Controllers
 
         private bool DoctorExists(int id)
         {
-            return _context.Doctors.Any(e => e.Id == id);
+            throw new NotImplementedException();
         }
+
+
     }
 }
