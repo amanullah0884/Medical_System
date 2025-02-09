@@ -16,4 +16,4 @@ namespace Medical_System.Model
         public virtual Patient Patient { get; set; }
         public virtual Problem Problem { get; set; }
     }
-}
+}//
